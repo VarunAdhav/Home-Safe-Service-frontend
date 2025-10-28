@@ -6,6 +6,7 @@ import AddService from "./pages/AddService";
 import PrivacyDashboard from "./pages/PrivacyDashboard";
 import Tracing from "./pages/Tracing";
 import Navbar from "./components/Navbar";
+import MyBookings from "./pages/MyBookings";
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/book" element={<BookService />} />
+          <Route path="/my-bookings" element={<MyBookings />} />
           <Route path="/add-service" element={<AddService />} />
           <Route path="/privacy" element={<PrivacyDashboard />} />
           <Route path="/tracing" element={<Tracing />} />

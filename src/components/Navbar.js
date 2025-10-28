@@ -53,7 +53,15 @@ export default function Navbar() {
 
           {user && (
             <>
-              <Link to="/book" className="link">Book</Link>
+              {user && user.role === "customer" && (
+                <Link to="/book" className="link">
+                  Book
+                </Link>)}
+              {user && user.role === "customer" && (
+                <Link to="/my-bookings" className="link">
+                  My Bookings
+                </Link>
+              )}
               {user.role === "provider" && (
                 <Link to="/add-service" className="link">Provide</Link>
               )}
