@@ -32,6 +32,15 @@ export default function MyBookings() {
     }
     };
 
+    const formatBookingSlot = (slot) => {
+        if (!slot?.date || !slot?.time) return "—";
+        const date = new Date(slot.date);
+        return `${date.toLocaleDateString("en-US", {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+        })} at ${slot.time}`;
+    };
 
   return (
     <div className="mt-6">
@@ -54,16 +63,14 @@ export default function MyBookings() {
                   </p>
                 )}
 
-                {/* Booked Timing */}
                 {s.bookedSlot ? (
-                  <p className="text-sm text-gray-700">
-                    <b>Booked Slot:</b> {s.bookedSlot.day} at {s.bookedSlot.time}
-                  </p>
+                    <p className="text-sm text-gray-700">
+                        <b>Booked Slot:</b> {formatBookingSlot(s.bookedSlot)}
+                    </p>
                 ) : (
-                  <p className="text-sm text-gray-400 italic">
-                    (No slot booked yet)
-                  </p>
+                    <p className="text-sm text-gray-400 italic">(No slot booked yet)</p>
                 )}
+
 
                 {/* Provider's available window (for reference) */}
                 {s.availableTimes && (
