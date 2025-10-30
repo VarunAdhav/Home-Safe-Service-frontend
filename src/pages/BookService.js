@@ -34,13 +34,32 @@ export default function BookService() {
   const book = async (id) => {
     if (!selectedDay || !selectedTime)
       return alert("Select day and time first!");
-    await axios.post(
-      `http://localhost:5000/api/services/${id}/book`,
-      { selectedDay, selectedTime },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    alert("Service booked successfully!");
-    window.location.reload();
+
+    const today = new Date();
+    const targetDate = new Date();
+    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const selectedDayIndex = daysOfWeek.indexOf(selectedDay);
+    const currentDayIndex = today.getDay();
+
+    let daysToAdd = selectedDayIndex - currentDayIndex;
+    if (daysToAdd < 0) daysToAdd += 7; 
+    targetDate.setDate(today.getDate() + daysToAdd);
+
+    const selectedDate = targetDate.toISOString().split("T")[0]; 
+
+    try {
+      await axios.post(
+        `http://localhost:5000/api/services/${id}/book`,
+        { selectedDay, selectedDate, selectedTime },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      alert("Service booked successfully!");
+      window.location.reload();
+    } catch (err) {
+      console.error("Booking failed:", err.response?.data || err.message);
+      alert(err.response?.data?.message || "Booking failed. Please try again.");
+    }
   };
 
   return (
@@ -104,11 +123,12 @@ export default function BookService() {
             )}
 
 
-            {user.role === "customer" && s.status === "available" && (
+            {user.role === "customer" && (
               <button className="btn mt-2" onClick={() => book(s._id)}>
                 Book Slot
               </button>
             )}
+
 
 
             {user.role === "provider" && (

@@ -8,6 +8,7 @@ import Tracing from "./pages/Tracing";
 import Navbar from "./components/Navbar";
 import MyBookings from "./pages/MyBookings";
 import MyServices from "./pages/MyServices";
+import MyCustomers from "./pages/MyCustomers";
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/privacy" element={<PrivacyDashboard />} />
           <Route path="/tracing" element={<Tracing />} />
           <Route path="/my-services" element={<MyServices />} />
+          <Route path="/my-customers" element={<MyCustomers />} />
         </Routes>
       </div>
     </BrowserRouter>
