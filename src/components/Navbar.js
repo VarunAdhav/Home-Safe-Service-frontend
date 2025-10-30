@@ -17,24 +17,22 @@ export default function Navbar() {
     navigate("/");
   };
 
-  // 🚀 Handle brand click according to user type
   const handleHomeClick = (e) => {
-    e.preventDefault(); // stop normal <Link> navigation
+    e.preventDefault(); 
     if (!user) {
-      navigate("/"); // not logged in → login page
+      navigate("/"); 
     } else if (user.role === "provider") {
       navigate("/add-service");
     } else if (user.role === "admin") {
       navigate("/privacy");
     } else {
-      navigate("/book"); // default customer
+      navigate("/book"); 
     }
   };
 
   return (
     <nav className="bg-white border-b border-slate-200">
       <div className="max-w-4xl mx-auto flex items-center justify-between p-3">
-        {/* Brand logo/name now has dynamic redirect */}
         <Link
           to="/"
           onClick={handleHomeClick}
@@ -65,8 +63,11 @@ export default function Navbar() {
               {user.role === "provider" && (
                 <Link to="/add-service" className="link">Provide</Link>
               )}
+              {user.role === "provider" && (
+                <Link to="/my-services" className="link">My Services</Link>
+              )}
               <Link to="/privacy" className="link">Privacy</Link>
-              <Link to="/tracing" className="link">Tracing</Link>
+              {/* <Link to="/tracing" className="link">Tracing</Link> */}
               <button
                 onClick={handleLogout}
                 className="link text-red-600 hover:text-red-800"
