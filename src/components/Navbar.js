@@ -63,9 +63,6 @@ export default function Navbar() {
                 </Link>
               )}
               {user.role === "provider" && (
-                <Link to="/my-customers" className="link">My Customers</Link>
-              )}
-              {user.role === "provider" && (
                 <Link to="/add-service" className="link">Provide</Link>
               )}
               <Link to="/privacy" className="link">Privacy</Link>

@@ -30,41 +30,18 @@ export default function BookService() {
     return slots;
   };
 
-  const generateNext30Days = () => {
-    const today = new Date();
-    return Array.from({ length: 30 }, (_, i) => {
-      const date = new Date();
-      date.setDate(today.getDate() + i);
-      return {
-        date,
-        dayName: date.toLocaleDateString("en-US", { weekday: "long" }),
-        formatted: date.toISOString().split("T")[0], // YYYY-MM-DD
-      };
-    });
-  };
-
 
   const book = async (id) => {
     if (!selectedDay || !selectedTime)
-      return alert("Select date and time first!");
-
-    const selectedDate = new Date(selectedDay);
-    const dayName = selectedDate.toLocaleDateString("en-US", { weekday: "long" });
-
+      return alert("Select day and time first!");
     await axios.post(
       `http://localhost:5000/api/services/${id}/book`,
-      {
-        selectedDay: dayName,
-        selectedDate: selectedDate.toISOString().split("T")[0], // YYYY-MM-DD
-        selectedTime,
-      },
+      { selectedDay, selectedTime },
       { headers: { Authorization: `Bearer ${token}` } }
     );
-
     alert("Service booked successfully!");
     window.location.reload();
   };
-
 
   return (
     <div className="mt-6 space-y-3">
@@ -84,30 +61,21 @@ export default function BookService() {
 
             {s.availableDays?.length > 0 && (
               <div>
-                <p className="font-semibold text-sm">Select Date (Next 30 Days):</p>
-
-                <div className="grid grid-cols-7 gap-2 mt-3 text-center text-xs">
-                  {generateNext30Days().map(({ date, dayName, formatted }) => {
-                    const isAvailable = s.availableDays.includes(dayName);
-                    return (
-                      <button
-                        key={formatted}
-                        type="button"
-                        onClick={() => isAvailable && setSelectedDay(formatted)}
-                        className={`p-2 rounded border transition ${
-                          selectedDay === formatted
-                            ? "bg-blue-600 text-white border-blue-600"
-                            : isAvailable
-                            ? "bg-gray-100 hover:bg-blue-50"
-                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                <p className="font-semibold text-sm">Available Days:</p>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {s.availableDays.map((day) => (
+                    <button
+                      key={day}
+                      type="button"
+                      onClick={() => setSelectedDay(day)}
+                      className={`px-3 py-1 rounded border ${selectedDay === day
+                        ? "bg-blue-600 text-white border-blue-600"
+                        : "bg-gray-200 text-gray-800 border-gray-300"
                         }`}
-                        disabled={!isAvailable}
-                      >
-                        <p className="font-semibold">{dayName.slice(0, 3)}</p>
-                        <p>{date.getDate()}</p>
-                      </button>
-                    );
-                  })}
+                    >
+                      {day}
+                    </button>
+                  ))}
                 </div>
               </div>
             )}
@@ -135,19 +103,6 @@ export default function BookService() {
               </div>
             )}
 
-            {selectedDay && selectedTime && (
-              <p className="mt-2 text-sm text-gray-700">
-                You selected{" "}
-                <b>
-                  {new Date(selectedDay).toLocaleDateString("en-US", {
-                    weekday: "long",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </b>{" "}
-                at <b>{selectedTime}</b>.
-              </p>
-            )}
 
             {user.role === "customer" && s.status === "available" && (
               <button className="btn mt-2" onClick={() => book(s._id)}>
