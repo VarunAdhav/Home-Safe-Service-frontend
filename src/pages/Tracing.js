@@ -8,6 +8,7 @@ export default function Tracing() {
   const [positiveCount, setPositiveCount] = useState(0);
   const [matchCount, setMatchCount] = useState(0);
   const [otherId, setOtherId] = useState("");
+  const [profile, setProfile] = useState(null);
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const token = user?.token;
 
@@ -33,18 +34,41 @@ export default function Tracing() {
   };
 
   const reportPositive = async () => {
-    const ids = [];
-    // upload your own recent beacons (last 3 days for demo)
-    for (let i=0; i<3; i++) {
-      const dt = new Date(Date.now() - i*24*60*60*1000).toISOString().slice(0,10);
-      const key = "my_beacon_id_" + dt;
-      const val = localStorage.getItem(key);
-      if (val) ids.push(val);
-    }
-    if (ids.length === 0) return alert("No beacons to report.");
-    await axios.post("http://localhost:5000/api/tracing/report-positive", { beaconIds: ids }, { headers: { Authorization: `Bearer ${token}` } });
-    alert("Your (anonymous) beacons have been reported.");
+
+    await axios.post("http://localhost:5000/api/health/report", { status: "exposed" }, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    window.dispatchEvent(new Event("healthStatusUpdated"));
+
+    const { data: updated } = await axios.get("http://localhost:5000/api/user/profile", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    localStorage.setItem("user", JSON.stringify(updated));
+
+    window.dispatchEvent(new Event("healthStatusUpdated"));
   };
+
+  useEffect(() => {
+    (async () => {
+      if (!token) return;
+      const { data } = await axios.get("http://localhost:5000/api/user/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProfile(data);
+    })();
+  }, [token]);
+
+  const nowLocked =
+    profile?.healthStatus === "positive" &&
+    profile?.restrictedUntil &&
+    new Date(profile.restrictedUntil) > new Date();
+
+  const remainingDays = (() => {
+    if (!profile?.restrictedUntil) return 0;
+    const d = Math.ceil((new Date(profile.restrictedUntil) - new Date()) / (1000 * 60 * 60 * 24));
+    return Math.max(0, d);
+  })();
+
 
   return (
     <div className="mt-6 space-y-4">
@@ -57,7 +81,7 @@ export default function Tracing() {
       <div className="card space-y-2">
         <h3 className="font-semibold">Simulate Encounter</h3>
         <div className="flex space-x-2">
-          <input className="input" placeholder="Peer beacon id" value={otherId} onChange={(e)=>setOtherId(e.target.value)} />
+          <input className="input" placeholder="Peer beacon id" value={otherId} onChange={(e) => setOtherId(e.target.value)} />
           <button className="btn" onClick={simulateEncounter}>Log Encounter</button>
         </div>
         <p className="text-sm text-slate-600">Recorded encounters: {encounters.length}</p>
