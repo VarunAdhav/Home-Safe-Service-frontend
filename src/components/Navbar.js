@@ -101,10 +101,7 @@ export default function Navbar() {
                   </>
                 )}
 
-                {/* Always accessible */}
-                <Link to="/privacy" className="link">
-                  Privacy
-                </Link>
+                <Link to="/account" className="link">Account</Link>
 
                 <MarkPositiveButton />
                 <button

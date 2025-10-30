@@ -53,7 +53,12 @@ export default function MyBookings() {
                     Provider: <b>{s.provider.name}</b> ({s.provider.email})
                   </p>
                 )}
-
+                <p>
+                  Company Name: {s.provider?.name}
+                  {s.provider?.companyName && (
+                    <> — <span className="text-slate-600">{s.provider.companyName}</span></>
+                  )}
+                </p>
                 {/* Booked Timing */}
                 {s.bookedSlot ? (
                   <p className="text-sm text-gray-700">

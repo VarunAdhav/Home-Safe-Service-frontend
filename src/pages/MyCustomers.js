@@ -59,9 +59,19 @@ export default function MyCustomers() {
           >
             <h4 className="font-semibold text-lg">{b.service?.title}</h4>
             <p className="text-sm text-slate-600">{b.service?.description}</p>
-            <p className="mt-1 text-sm">
+            <p className="text-sm mt-1">
               <b>Customer:</b> {b.customer?.name} ({b.customer?.email})
             </p>
+            {b.customer?.phoneNumber && (
+              <p className="text-sm">
+                <b>Phone:</b> {b.customer.phoneNumber}
+              </p>
+            )}
+            {b.customer?.address && (
+              <p className="text-sm">
+                <b>Address:</b> {b.customer.address}
+              </p>
+            )}
             <p className="text-sm">
               <b>Date:</b> {b.selectedDate} | <b>Time:</b> {b.selectedTime}
             </p>
